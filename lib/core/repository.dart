@@ -3,7 +3,7 @@ import 'package:reminder/models/reminder.dart';
 abstract class Repository {
   const Repository();
 
-  Future<List<Reminder>> getReminderList();
+  Future<List<Reminder>> getReminders();
 
   Future<void> addReminder(Reminder reminder);
 

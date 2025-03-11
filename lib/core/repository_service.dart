@@ -6,7 +6,7 @@ class RepositoryService {
 
   const RepositoryService(this.repository);
 
-  Future<List<Reminder>> getReminderList() async => await repository.getReminderList();
+  Future<List<Reminder>> getReminders() async => await repository.getReminders();
 
   Future<void> addReminder(Reminder reminder) async => await repository.addReminder(reminder);
 

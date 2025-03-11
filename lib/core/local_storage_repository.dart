@@ -16,48 +16,48 @@ class LocalStorageRepository extends Repository {
   }
 
   _init() {
-    getReminderList();
+    getReminders();
   }
 
   @override
   Future<void> addReminder(Reminder reminder) async {
-    final List<Reminder> reminderList = await getReminderList();
-    final int index = reminderList.indexWhere((item) => item.id == reminder.id);
+    final List<Reminder> reminders = await getReminders();
+    final int index = reminders.indexWhere((item) => item.id == reminder.id);
     if (index == -1) {
-      reminderList.add(reminder);
+      reminders.add(reminder);
     }
-    sharedPreference.setString(_todosCollectionKey, json.encode(reminderList));
+    await sharedPreference.setString(_todosCollectionKey, json.encode(reminders));
   }
 
   @override
   Future<void> deleteReminder(String id) async{
-    final List<Reminder> reminderList = await getReminderList();
-    reminderList.removeWhere((reminder) => reminder.id == id);
-    sharedPreference.setString(_todosCollectionKey, json.encode(reminderList));
+    final List<Reminder> reminders = await getReminders();
+    reminders.removeWhere((reminder) => reminder.id == id);
+    await sharedPreference.setString(_todosCollectionKey, json.encode(reminders));
   }
 
   @override
-  Future<List<Reminder>> getReminderList() async {
+  Future<List<Reminder>> getReminders() async {
     final String? value = sharedPreference.getString(_todosCollectionKey);
     if (value == null) {
       return [];
     }
-    final reminderJson = json.decode(value);
-    if (reminderJson! is List) {
+    final dynamic reminderJson = json.decode(value);
+    if (reminderJson is! List) {
       return [];
     }
-    final reminderList = List<Map<dynamic, dynamic>>.from(reminderJson).map((item) => Reminder.fromJson(item)).toList();
-    return reminderList;
+    final reminders = List<Map<dynamic, dynamic>>.from(reminderJson).map((item) => Reminder.fromJson(item)).toList();
+    return reminders;
   }
 
   @override
   Future<void> updateReminder(Reminder reminder) async {
-    final List<Reminder> reminderList = await getReminderList();
-    final int index = reminderList.indexWhere((item) => item.id == reminder.id);
+    final List<Reminder> reminders = await getReminders();
+    final int index = reminders.indexWhere((item) => item.id == reminder.id);
     if (index == -1) {
       return;
     }
-    reminderList[index] = reminder;
-    sharedPreference.setString(_todosCollectionKey, json.encode(reminderList));
+    reminders[index] = reminder;
+    await sharedPreference.setString(_todosCollectionKey, json.encode(reminders));
   }
 }

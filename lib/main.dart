@@ -16,7 +16,9 @@ Future<void> main() async {
       cacheOptions: const SharedPreferencesWithCacheOptions(),
     ),
   );
-  runApp(MyApp(createReminderRepositoryService: () => RepositoryService(repository),));
+  runApp(MyApp(
+    createReminderRepositoryService: () => RepositoryService(repository),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -34,14 +36,14 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => ReminderBloc(repository: context.read<RepositoryService>()),
+            create: (context) => ReminderBloc(repository: context.read<RepositoryService>())..add(LoadReminders()),
           ),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: Strings.appName,
           theme: AppTheme.light,
-          home: const ReminderListPage(),
+          home: const RemindersPage(),
         ),
       ),
     );
