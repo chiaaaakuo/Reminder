@@ -1,6 +1,21 @@
 part of 'reminder_bloc.dart';
 
-@immutable
-sealed class ReminderState {}
+final class ReminderState {
+  final List<Reminder> reminders;
+  final int completedReminders;
 
-final class ReminderInitial extends ReminderState {}
+  ReminderState({
+    this.reminders = const <Reminder>[],
+    this.completedReminders = 0,
+  });
+
+  ReminderState copywith({
+    List<Reminder>? reminders,
+    int? completedReminders,
+  }) {
+    return ReminderState(
+      reminders: reminders ?? this.reminders,
+      completedReminders: completedReminders ?? this.completedReminders,
+    );
+  }
+}

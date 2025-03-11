@@ -1,33 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder/blocs/reminder_bloc/reminder_bloc.dart';
+import 'package:reminder/core/local_storage_repository.dart';
+import 'package:reminder/core/repository_service.dart';
 import 'package:reminder/values/strings.dart';
+import 'package:reminder/values/theme.dart';
 import 'package:reminder/views/reminder_list_page.dart';
+import 'package:shared_preferences/shared_preferences.dart' show SharedPreferencesWithCache, SharedPreferencesWithCacheOptions;
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+
+  LocalStorageRepository repository = LocalStorageRepository(
+    sharedPreference: await SharedPreferencesWithCache.create(
+      cacheOptions: const SharedPreferencesWithCacheOptions(),
+    ),
+  );
+  runApp(MyApp(createReminderRepositoryService: () => RepositoryService(repository),));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+    required this.createReminderRepositoryService,
+  });
+
+  final RepositoryService Function() createReminderRepositoryService;
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => ReminderBloc(),
+    return RepositoryProvider<RepositoryService>(
+      create: (_) => createReminderRepositoryService(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => ReminderBloc(repository: context.read<RepositoryService>()),
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: Strings.appName,
+          theme: AppTheme.light,
+          home: const ReminderListPage(),
         ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: Strings.appName,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const ReminderListPage(),
       ),
     );
   }
