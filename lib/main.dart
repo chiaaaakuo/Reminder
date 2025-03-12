@@ -4,7 +4,7 @@ import 'package:reminder/blocs/reminder_bloc/reminder_bloc.dart';
 import 'package:reminder/core/local_storage_repository.dart';
 import 'package:reminder/core/repository_service.dart';
 import 'package:reminder/values/strings.dart';
-import 'package:reminder/values/theme.dart';
+import 'package:reminder/styles/themes.dart';
 import 'package:reminder/views/reminder_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart' show SharedPreferencesWithCache, SharedPreferencesWithCacheOptions;
 
