@@ -36,6 +36,7 @@ class AppTheme {
       bodyLarge: TextStyle(color: AppColors.secondaryColor, fontSize: 20),
       bodyMedium: TextStyle(color: AppColors.secondaryColor, fontSize: 18),
       bodySmall: TextStyle(color: AppColors.secondaryColor, fontSize: 16),
+      labelMedium: TextStyle(color: AppColors.grey, fontSize: 18),
     ),
     listTileTheme: ListTileThemeData(
       textColor: AppColors.primaryColor,

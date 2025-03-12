@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, BlocSelector, ReadContext;
+import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, BlocListener, BlocSelector, MultiBlocListener, ReadContext;
 import 'package:reminder/blocs/reminder_bloc/reminder_bloc.dart';
 import 'package:reminder/extensions/widget_extensions.dart';
 import 'package:reminder/models/sort_type.dart';
@@ -7,6 +7,8 @@ import 'package:reminder/models/reminder.dart';
 import 'package:reminder/styles/theme_extensions/list_tile_left_strip_theme.dart';
 import 'package:reminder/styles/themes.dart';
 import 'package:reminder/values/strings.dart';
+import 'package:reminder/widgets/gradient_background.dart';
+import 'package:scrollview_observer/scrollview_observer.dart';
 
 class RemindersPage extends StatefulWidget {
   const RemindersPage({super.key});
@@ -16,62 +18,102 @@ class RemindersPage extends StatefulWidget {
 }
 
 class _RemindersPageState extends State<RemindersPage> {
+  final ListObserverController _listObserverController = ListObserverController(controller: ScrollController());
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: context.theme.appGradientTheme.backgroundGradient,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ReminderBloc, ReminderState>(
+          listenWhen: (prev, cur) => cur.status == RemindersStatus.failure && cur.errorMessage != null,
+          listener: (context, state) => _showErrorDialog(state.errorMessage!),
         ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(),
-              const Header(),
-              const Divider(indent: 24, endIndent: 24),
-              BlocBuilder<ReminderBloc, ReminderState>(
-                builder: (context, state) {
-                  final double progress = state.reminders.isNotEmpty ? state.completedReminders / state.reminders.length : 0;
-                  return ProgressTracker(progress: progress);
-                },
-              ),
-              Flexible(
-                flex: 4,
-                child: BlocSelector<ReminderBloc, ReminderState, List<Reminder>>(
-                  selector: (state) => state.reminders,
-                  builder: (context, reminders) {
-                    if (reminders.isEmpty) {
-                      return Container();
-                    }
-                    return ReminderList(reminders: reminders);
+        BlocListener<ReminderBloc, ReminderState>(
+          listenWhen: (prev, cur) =>
+              cur.action == RemindersAction.add && cur.status == RemindersStatus.success && cur.scrollToIndex != null,
+          listener: (context, state) => _scrollToIndex(state.reminders, state.scrollToIndex!),
+        ),
+      ],
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: GradientBackground(
+          gradient: context.theme.appGradientTheme.backgroundGradient,
+          child: SafeArea(
+            child: Column(
+              spacing: 12,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Spacer(),
+                const _Header(),
+                const Divider(indent: 24, endIndent: 24),
+                BlocBuilder<ReminderBloc, ReminderState>(
+                  builder: (context, state) {
+                    final double progress = state.reminders.isNotEmpty ? state.completedReminders / state.reminders.length : 0;
+                    return _ProgressTracker(progress: progress);
                   },
                 ),
-              ),
-              const Divider(indent: 24, endIndent: 24),
-              BlocSelector<ReminderBloc, ReminderState, SortType>(
-                selector: (state) => state.sortType,
-                builder: (context, sortType) {
-                  return RemindersSorter(
-                    isActive: sortType == SortType.activePriority,
-                    onChanged: (SortType sortType) => context.read<ReminderBloc>().add(ToggleRemindersSort(sortType: sortType)),
-                  );
-                },
-              ),
-              const Spacer(),
-              ReminderCreator(
-                onAddReminder: (String title) => context.read<ReminderBloc>().add(AddReminder(title: title)),
-              ),
-            ],
+                Flexible(
+                  flex: 4,
+                  child: BlocSelector<ReminderBloc, ReminderState, List<Reminder>>(
+                    selector: (state) => state.reminders,
+                    builder: (context, reminders) {
+                      if (reminders.isEmpty) {
+                        return const _EmptyReminderList();
+                      }
+                      return ListViewObserver(
+                        controller: _listObserverController,
+                        child: _ReminderList(
+                          reminders: reminders,
+                          controller: _listObserverController.controller!,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const Divider(indent: 24, endIndent: 24),
+                BlocSelector<ReminderBloc, ReminderState, SortType>(
+                  selector: (state) => state.sortType,
+                  builder: (context, sortType) {
+                    return _RemindersSorter(
+                      isActive: sortType == SortType.incompleteFirst,
+                      onChanged: (SortType sortType) => context.read<ReminderBloc>().add(ToggleRemindersSort(sortType: sortType)),
+                    );
+                  },
+                ),
+                const Spacer(),
+                _ReminderCreator(
+                  onSubmit: (String title) => context.read<ReminderBloc>().add(AddReminder(title: title)),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  void _scrollToIndex(List<Reminder> reminders, int index) {
+    if (index == -1) {
+      return;
+    }
+    _listObserverController.animateTo(index: index, duration: const Duration(milliseconds: 800), curve: Curves.easeInOut);
+  }
+
+  void _showErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog.adaptive(title: Text(errorMessage), actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text(Strings.ok),
+        )
+      ]),
+    );
+  }
 }
 
-class Header extends StatelessWidget {
-  const Header({Key? key}) : super(key: key);
+class _Header extends StatelessWidget {
+  const _Header({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -94,8 +136,8 @@ class Header extends StatelessWidget {
   }
 }
 
-class ProgressTracker extends StatelessWidget {
-  const ProgressTracker({
+class _ProgressTracker extends StatelessWidget {
+  const _ProgressTracker({
     Key? key,
     this.progress = 0,
     this.progressHeight = 14,
@@ -107,7 +149,7 @@ class ProgressTracker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         spacing: 10,
         children: [
@@ -125,48 +167,65 @@ class ProgressTracker extends StatelessWidget {
   }
 }
 
-class ReminderList extends StatefulWidget {
-  const ReminderList({
-    Key? key,
-    required this.reminders,
-  }) : super(key: key);
+class _EmptyReminderList extends StatelessWidget {
+  const _EmptyReminderList({Key? key}) : super(key: key);
 
-  final List<Reminder> reminders;
-
-  @override
-  State<ReminderList> createState() => _ReminderListState();
-}
-
-class _ReminderListState extends State<ReminderList> {
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      thumbVisibility: true,
-      thickness: 4,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        itemCount: widget.reminders.length,
-        itemBuilder: (BuildContext context, int index) {
-          final reminder = widget.reminders.elementAt(index);
-          return ReminderItem(
-            reminder: reminder,
-            onDelete: (String id) => context.read<ReminderBloc>().add(DeleteReminder(id: id)),
-            onToggleDone: (bool isDone) => context.read<ReminderBloc>().add(
-                  ToggleReminderStatus(
-                    reminder: reminder,
-                    isDone: isDone,
-                  ),
-                ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 8),
+    return Center(
+      child: Text(
+        Strings.emptyReminders,
+        style: context.theme.textTheme.labelMedium,
       ),
     );
   }
 }
 
-class ReminderItem extends StatelessWidget {
-  const ReminderItem({
+class _ReminderList extends StatelessWidget {
+  const _ReminderList({
+    Key? key,
+    required this.reminders,
+    required this.controller,
+  }) : super(key: key);
+
+  final List<Reminder> reminders;
+  final ScrollController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return RawScrollbar(
+      controller: controller,
+      thickness: 10,
+      radius: const Radius.circular(10),
+      thumbVisibility: true,
+      thumbColor: context.theme.colorScheme.tertiary,
+      child: ListView.separated(
+        controller: controller,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        itemCount: reminders.length,
+        itemBuilder: _itemBuilder,
+        separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 8),
+      ),
+    );
+  }
+
+  Widget _itemBuilder(BuildContext context, int index) {
+    final reminder = reminders.elementAt(index);
+    return _ReminderItem(
+      reminder: reminder,
+      onDelete: (String id) => context.read<ReminderBloc>().add(DeleteReminder(id: id)),
+      onToggleDone: (bool isDone) => context.read<ReminderBloc>().add(
+            ToggleReminderStatus(
+              reminder: reminder,
+              isDone: isDone,
+            ),
+          ),
+    );
+  }
+}
+
+class _ReminderItem extends StatelessWidget {
+  const _ReminderItem({
     Key? key,
     required this.reminder,
     required this.onToggleDone,
@@ -193,11 +252,11 @@ class ReminderItem extends StatelessWidget {
             ),
           ),
           CheckboxListTile(
-            value: reminder.done,
+            value: reminder.isDone,
             title: Text(
               reminder.title,
               style: context.theme.textTheme.titleSmall?.copyWith(
-                decoration: reminder.done ? TextDecoration.lineThrough : null,
+                decoration: reminder.isDone ? TextDecoration.lineThrough : null,
               ),
             ),
             secondary: IconButton(
@@ -219,8 +278,8 @@ class ReminderItem extends StatelessWidget {
   }
 }
 
-class RemindersSorter extends StatelessWidget {
-  const RemindersSorter({
+class _RemindersSorter extends StatelessWidget {
+  const _RemindersSorter({
     Key? key,
     this.isActive = false,
     required this.onChanged,
@@ -234,7 +293,6 @@ class RemindersSorter extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
-        spacing: 8,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(Strings.orderTitle, style: context.theme.textTheme.titleSmall),
@@ -242,7 +300,7 @@ class RemindersSorter extends StatelessWidget {
             scale: 0.8,
             child: Switch(
               value: isActive,
-              onChanged: (bool isActive) => onChanged(isActive ? SortType.activePriority : SortType.asc),
+              onChanged: (bool isActive) => onChanged(isActive ? SortType.incompleteFirst : SortType.createTimeAsc),
             ),
           ),
         ],
@@ -251,8 +309,8 @@ class RemindersSorter extends StatelessWidget {
   }
 }
 
-class ReminderCreator extends StatefulWidget {
-  const ReminderCreator({
+class _ReminderCreator extends StatefulWidget {
+  const _ReminderCreator({
     Key? key,
     required this.onSubmit,
   }) : super(key: key);
@@ -260,17 +318,16 @@ class ReminderCreator extends StatefulWidget {
   final Function(String title) onSubmit;
 
   @override
-  State<ReminderCreator> createState() => _ReminderCreatorState();
+  State<_ReminderCreator> createState() => _ReminderCreatorState();
 }
 
-class _ReminderCreatorState extends State<ReminderCreator> {
-  String title = "";
+class _ReminderCreatorState extends State<_ReminderCreator> {
   late TextEditingController _controller;
 
   @override
   initState() {
     super.initState();
-    _controller = TextEditingController(text: title);
+    _controller = TextEditingController(text: "");
   }
 
   @override
@@ -290,19 +347,18 @@ class _ReminderCreatorState extends State<ReminderCreator> {
                   child: TextField(
                     controller: _controller,
                     decoration: const InputDecoration(isDense: true),
-                    onChanged: (String value) => setState(() => title = value),
                     onSubmitted: (String value) => _onSubmit(),
                   ),
                 ),
                 AspectRatio(
                   aspectRatio: 1.2,
                   child: IconButton.filled(
-                    color: context.theme.primaryColor,
+                    color: context.theme.colorScheme.primary,
                     style: FilledButton.styleFrom(
                       iconColor: context.theme.colorScheme.onPrimary,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     ),
-                    onPressed: title.isNotEmpty ? () => _onSubmit() : null,
+                    onPressed: _onSubmit,
                     icon: const Icon(Icons.add_rounded, size: 32),
                   ),
                 )
@@ -315,9 +371,9 @@ class _ReminderCreatorState extends State<ReminderCreator> {
   }
 
   void _onSubmit() {
-    widget.onSubmit(title);
+    widget.onSubmit(_controller.text);
     _controller.clear();
-    setState(() => title = "");
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   @override

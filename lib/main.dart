@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminder/blocs/reminder_bloc/reminder_bloc.dart';
@@ -16,6 +18,11 @@ Future<void> main() async {
       cacheOptions: const SharedPreferencesWithCacheOptions(),
     ),
   );
+
+  FlutterError.onError = (details) {
+    log(details.exceptionAsString(), stackTrace: details.stack);
+  };
+
   runApp(MyApp(
     createReminderRepositoryService: () => RepositoryService(repository),
   ));

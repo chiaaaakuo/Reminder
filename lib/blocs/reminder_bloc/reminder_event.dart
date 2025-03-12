@@ -30,5 +30,5 @@ final class ToggleReminderStatus extends ReminderEvent {
 final class ToggleRemindersSort extends ReminderEvent {
   final SortType sortType;
 
-  ToggleRemindersSort({this.sortType = SortType.asc});
+  ToggleRemindersSort({this.sortType = SortType.createTimeAsc});
 }

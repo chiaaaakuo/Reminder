@@ -1,4 +1,4 @@
 enum SortType {
-  asc,
-  activePriority,
+  createTimeAsc,
+  incompleteFirst,
 }

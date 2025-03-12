@@ -3,45 +3,45 @@ import 'package:uuid/uuid.dart';
 class Reminder {
   final String id;
   final String title;
-  final DateTime dateTime;
-  final bool done;
+  final DateTime createTime;
+  final bool isDone;
 
   Reminder._({
     required this.title,
-    required this.dateTime,
+    required this.createTime,
     String? id,
-    this.done = false,
+    this.isDone = false,
   }) : id = id ?? const Uuid().v4();
 
   Reminder.temp({
     required this.title,
-    this.done = false,
+    this.isDone = false,
   })  : id = const Uuid().v4(),
-        dateTime = DateTime.now();
+        createTime = DateTime.now();
 
   Reminder copyWith({
     String? title,
-    DateTime? dateTime,
-    bool? done,
+    DateTime? createTime,
+    bool? isDone,
   }) {
     return Reminder._(
       id: id,
       title: title ?? this.title,
-      dateTime: dateTime ?? this.dateTime,
-      done: done ?? this.done,
+      createTime: createTime ?? this.createTime,
+      isDone: isDone ?? this.isDone,
     );
   }
 
   Reminder.fromJson(Map<dynamic, dynamic> map)
       : id = map['id'],
         title = map['title'],
-        dateTime = DateTime.parse(map['dateTime']),
-        done = map['done'];
+        createTime = DateTime.parse(map['createTime']),
+        isDone = map['isDone'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
-        'dateTime': dateTime.toString(),
-        'done': done,
+        'createTime': createTime.toString(),
+        'isDone': isDone,
       };
 }
