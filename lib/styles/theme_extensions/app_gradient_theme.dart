@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppGradientTheme extends ThemeExtension<AppGradientTheme> {
   final Gradient? backgroundGradient;
 
-  AppGradientTheme({required this.backgroundGradient});
+  const AppGradientTheme({required this.backgroundGradient});
 
   @override
   ThemeExtension<AppGradientTheme> copyWith({Gradient? backgroundGradient}) {

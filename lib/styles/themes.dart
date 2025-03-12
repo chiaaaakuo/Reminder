@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reminder/styles/app_colors.dart' show AppColors;
 import 'package:reminder/styles/theme_extensions/app_gradient_theme.dart';
+import 'package:reminder/styles/theme_extensions/list_tile_left_strip_theme.dart';
 
 class AppTheme {
   AppTheme._();
@@ -11,8 +12,8 @@ class AppTheme {
     ),
     dividerTheme: const DividerThemeData().copyWith(color: AppColors.primaryColor, thickness: 2),
     progressIndicatorTheme: const ProgressIndicatorThemeData().copyWith(
-      color: AppColors.tertiaryColor,
-      linearTrackColor: AppColors.primaryColor,
+      color: AppColors.secondaryColor,
+      linearTrackColor: AppColors.white,
     ),
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.primaryColor,
@@ -20,6 +21,7 @@ class AppTheme {
     ).copyWith(
       primary: AppColors.primaryColor,
       surface: AppColors.transparent,
+      onPrimary: AppColors.white,
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.fromMap({
@@ -33,12 +35,12 @@ class AppTheme {
       trackOutlineColor: WidgetStatePropertyAll(AppColors.transparent),
     ),
     textTheme: TextTheme(
-      titleLarge: TextStyle(color: AppColors.primaryColor, fontSize: 40),
+      titleLarge: TextStyle(color: AppColors.primaryColor, fontSize: 36),
       titleMedium: TextStyle(color: AppColors.primaryColor, fontSize: 18),
       titleSmall: TextStyle(color: AppColors.primaryColor, fontSize: 16),
-      bodyLarge: TextStyle(color: AppColors.tertiaryColor, fontSize: 20),
-      bodyMedium: TextStyle(color: AppColors.tertiaryColor, fontSize: 18),
-      bodySmall: TextStyle(color: AppColors.tertiaryColor, fontSize: 16),
+      bodyLarge: TextStyle(color: AppColors.secondaryColor, fontSize: 20),
+      bodyMedium: TextStyle(color: AppColors.secondaryColor, fontSize: 18),
+      bodySmall: TextStyle(color: AppColors.secondaryColor, fontSize: 16),
     ),
     listTileTheme: ListTileThemeData(
       textColor: AppColors.primaryColor,
@@ -53,14 +55,36 @@ class AppTheme {
         borderSide: BorderSide.none,
       ),
     ),
+    checkboxTheme: CheckboxThemeData(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      side: BorderSide(color: AppColors.grey, width: 1),
+    ),
     extensions: [
-      AppGradientTheme(backgroundGradient: _lightBackgroundGradient),
+      _lightGradientTheme,
+      _listTileLeftStripTheme,
     ],
   );
 
-  static final Gradient _lightBackgroundGradient = LinearGradient(
+  static final _lightGradientTheme = AppGradientTheme(backgroundGradient: LinearGradient(
     colors: [AppColors.blueLight, AppColors.purpleLight],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
+  ));
+
+  static final _listTileLeftStripTheme = ListTileLeftStripeTheme(
+    background: AppColors.white,
+    stripColor: AppColors.primaryColor,
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    borderRadius: BorderRadius.circular(4),
   );
+}
+
+extension AppThemeExtension on ThemeData {
+  ColorScheme get colorScheme => this.colorScheme;
+
+  TextTheme get textTheme => this.textTheme;
+
+  AppGradientTheme get appGradientTheme => extension<AppGradientTheme>() ?? AppTheme._lightGradientTheme;
+
+  ListTileLeftStripeTheme get listTileLeftStripTheme => extension<ListTileLeftStripeTheme>() ?? AppTheme._listTileLeftStripTheme;
 }
