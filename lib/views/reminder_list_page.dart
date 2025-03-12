@@ -252,8 +252,12 @@ class RemindersSorter extends StatelessWidget {
 }
 
 class ReminderCreator extends StatefulWidget {
-  const ReminderCreator({Key? key, required this.onAddReminder}) : super(key: key);
-  final Function(String title) onAddReminder;
+  const ReminderCreator({
+    Key? key,
+    required this.onSubmit,
+  }) : super(key: key);
+
+  final Function(String title) onSubmit;
 
   @override
   State<ReminderCreator> createState() => _ReminderCreatorState();
@@ -276,34 +280,42 @@ class _ReminderCreatorState extends State<ReminderCreator> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(Strings.addTitle, style: context.theme.textTheme.titleMedium),
-          Row(
-            spacing: 4,
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  onChanged: (String value) => setState(() => title = value),
+          Text(Strings.addTitle, style: context.theme.textTheme.titleSmall),
+          IntrinsicHeight(
+            child: Row(
+              spacing: 4,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(isDense: true),
+                    onChanged: (String value) => setState(() => title = value),
+                    onSubmitted: (String value) => _onSubmit(),
+                  ),
                 ),
-              ),
-              IconButton.filled(
-                color: context.theme.primaryColor,
-                style: FilledButton.styleFrom(
-                  iconColor: context.theme.colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                ),
-                onPressed: title.isNotEmpty ? () => widget.onAddReminder(title) : null,
-                icon: const Icon(Icons.add),
-              )
-            ],
+                AspectRatio(
+                  aspectRatio: 1.2,
+                  child: IconButton.filled(
+                    color: context.theme.primaryColor,
+                    style: FilledButton.styleFrom(
+                      iconColor: context.theme.colorScheme.onPrimary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    ),
+                    onPressed: title.isNotEmpty ? () => _onSubmit() : null,
+                    icon: const Icon(Icons.add_rounded, size: 32),
+                  ),
+                )
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  void onPressedAddButton() {
-    widget.onAddReminder(title);
+  void _onSubmit() {
+    widget.onSubmit(title);
     _controller.clear();
     setState(() => title = "");
   }

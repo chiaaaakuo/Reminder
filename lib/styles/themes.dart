@@ -7,21 +7,16 @@ class AppTheme {
   AppTheme._();
 
   static ThemeData light = ThemeData.light().copyWith(
-    scrollbarTheme: ScrollbarThemeData(
-      thumbColor: WidgetStateProperty.all(AppColors.tertiaryColor),
-    ),
-    dividerTheme: const DividerThemeData().copyWith(color: AppColors.primaryColor, thickness: 2),
+    dividerTheme: const DividerThemeData().copyWith(color: AppColors.primaryColor, thickness: 2, space: 2),
     progressIndicatorTheme: const ProgressIndicatorThemeData().copyWith(
       color: AppColors.secondaryColor,
       linearTrackColor: AppColors.white,
     ),
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primaryColor,
-      brightness: Brightness.light,
-    ).copyWith(
+    colorScheme: const ColorScheme.light().copyWith(
       primary: AppColors.primaryColor,
       surface: AppColors.transparent,
       onPrimary: AppColors.white,
+      tertiary: AppColors.tertiaryColor,
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.fromMap({
@@ -65,11 +60,13 @@ class AppTheme {
     ],
   );
 
-  static final _lightGradientTheme = AppGradientTheme(backgroundGradient: LinearGradient(
-    colors: [AppColors.blueLight, AppColors.purpleLight],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  ));
+  static final _lightGradientTheme = AppGradientTheme(
+    backgroundGradient: LinearGradient(
+      colors: [AppColors.blueLight, AppColors.purpleLight],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+  );
 
   static final _listTileLeftStripTheme = ListTileLeftStripeTheme(
     background: AppColors.white,
