@@ -173,14 +173,14 @@ class _ReminderList extends StatelessWidget {
         });
 
     if (height != null) {
-      return SizedBox(height: height!, child: body);
+      return SizedBox(height: height, child: body);
     }
     return body;
   }
 
   Widget _itemBuilder(BuildContext context, Reminder reminder) => _ReminderItem(
         reminder: reminder,
-        onDelete: (String id) => context.read<ReminderBloc>().add(DeleteReminder(id: id)),
+        onDelete: () => context.read<ReminderBloc>().add(DeleteReminder(id: reminder.id)),
         onToggleDone: (bool isDone) => context.read<ReminderBloc>().add(
               ToggleReminderStatus(
                 reminder: reminder,
@@ -199,7 +199,7 @@ class _ReminderItem extends StatelessWidget {
 
   final Reminder reminder;
   final ValueChanged<bool> onToggleDone;
-  final Function(String id) onDelete;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +214,7 @@ class _ReminderItem extends StatelessWidget {
         ),
         secondary: IconButton(
           icon: const Icon(Icons.clear),
-          onPressed: () => onDelete(reminder.id),
+          onPressed: onDelete,
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12),
         controlAffinity: ListTileControlAffinity.leading,
@@ -235,27 +235,28 @@ class _RemindersSorter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<ReminderBloc, ReminderState, SortType>(
-        selector: (ReminderState state) => state.sortType,
-        builder: (BuildContext context, SortType sortType) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(Strings.orderTitle, style: context.theme.textTheme.titleSmall),
-                Transform.scale(
-                  scale: 0.8,
-                  child: Switch(
-                    value: sortType == SortType.incompleteFirst,
-                    onChanged: (bool isActive) => context.read<ReminderBloc>().add(
-                          ToggleRemindersSort(sortType: isActive ? SortType.incompleteFirst : SortType.createTimeAsc),
-                        ),
-                  ),
+      selector: (ReminderState state) => state.sortType,
+      builder: (BuildContext context, SortType sortType) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(Strings.orderTitle, style: context.theme.textTheme.titleSmall),
+              Transform.scale(
+                scale: 0.8,
+                child: Switch(
+                  value: sortType == SortType.incompleteFirst,
+                  onChanged: (bool isActive) => context.read<ReminderBloc>().add(
+                        ToggleRemindersSort(sortType: isActive ? SortType.incompleteFirst : SortType.createTimeAsc),
+                      ),
                 ),
-              ],
-            ),
-          );
-        });
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -310,8 +311,8 @@ class _ReminderCreatorState extends State<_ReminderCreator> {
                       iconColor: context.theme.colorScheme.onPrimary,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     ),
-                    onPressed: title.isNotEmpty ? _onSubmit : null,
                     icon: const Icon(Icons.add_rounded, size: 32),
+                    onPressed: title.isNotEmpty ? _onSubmit : null,
                   ),
                 )
               ],
