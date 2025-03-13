@@ -55,9 +55,20 @@ class AppTheme {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       side: BorderSide(color: AppColors.grey, width: 1),
     ),
+    dialogTheme: const DialogThemeData().copyWith(
+      titleTextStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+      contentTextStyle:const TextStyle(
+        color: Colors.black,
+        fontSize: 18,
+      ),
+    ),
     extensions: [
       _lightGradientTheme,
-      _listTileLeftStripTheme,
+      _leftStripeBoxTheme,
     ],
   );
 
@@ -69,10 +80,9 @@ class AppTheme {
     ),
   );
 
-  static final _listTileLeftStripTheme = ListTileLeftStripeTheme(
+  static final _leftStripeBoxTheme = LeftStripeBoxTheme(
     background: AppColors.white,
     stripColor: AppColors.primaryColor,
-    padding: const EdgeInsets.symmetric(horizontal: 12),
     borderRadius: BorderRadius.circular(4),
   );
 }
@@ -84,5 +94,5 @@ extension AppThemeExtension on ThemeData {
 
   AppGradientTheme get appGradientTheme => extension<AppGradientTheme>() ?? AppTheme._lightGradientTheme;
 
-  ListTileLeftStripeTheme get listTileLeftStripTheme => extension<ListTileLeftStripeTheme>() ?? AppTheme._listTileLeftStripTheme;
+  LeftStripeBoxTheme get leftStripeBoxTheme => extension<LeftStripeBoxTheme>() ?? AppTheme._leftStripeBoxTheme;
 }

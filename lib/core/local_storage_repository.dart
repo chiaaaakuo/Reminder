@@ -34,7 +34,7 @@ class LocalStorageRepository extends Repository {
     } on RepoException {
       rethrow;
     } catch (e) {
-      throw RepoException("An unexpected error occurred.\n $e");
+      throw RepoException("An unexpected error occurred.\n$e");
     }
   }
 
@@ -49,7 +49,7 @@ class LocalStorageRepository extends Repository {
     } on RepoException {
       rethrow;
     } catch (e) {
-      throw RepoException("An unexpected error occurred.\n $e");
+      throw RepoException("An unexpected error occurred.\n$e");
     }
   }
 
@@ -69,7 +69,7 @@ class LocalStorageRepository extends Repository {
     } on ArgumentError catch (e) {
       throw RepoException("Argument Error: ${e.message}");
     } catch (e) {
-      throw RepoException("An unexpected error occurred.\n $e");
+      throw RepoException("An unexpected error occurred.\n$e");
     }
   }
 
@@ -88,7 +88,7 @@ class LocalStorageRepository extends Repository {
     } on RepoException {
       rethrow;
     } catch (e) {
-      throw RepoException(e.toString());
+      throw RepoException("An unexpected error occurred.\n$e");
     }
   }
 }
