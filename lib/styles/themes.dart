@@ -83,5 +83,5 @@ extension AppThemeExtension on ThemeData {
 
   AppGradientTheme get appGradientTheme => extension<AppGradientTheme>() ?? AppTheme._lightGradientTheme;
 
-  LeftStripeBoxTheme get listTileLeftStripTheme => extension<LeftStripeBoxTheme>() ?? AppTheme._leftStripeBoxTheme;
+  LeftStripeBoxTheme get leftStripeBoxTheme => extension<LeftStripeBoxTheme>() ?? AppTheme._leftStripeBoxTheme;
 }
