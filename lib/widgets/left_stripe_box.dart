@@ -21,7 +21,7 @@ class LeftStripeBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LeftStripeBoxTheme leftStripeTheme = context.theme.listTileLeftStripTheme;
+    final LeftStripeBoxTheme leftStripeTheme = context.theme.leftStripeBoxTheme;
 
     return ClipRRect(
       borderRadius: borderRadius ?? leftStripeTheme.borderRadius,
