@@ -57,7 +57,7 @@ class AppTheme {
     ),
     extensions: [
       _lightGradientTheme,
-      _listTileLeftStripTheme,
+      _leftStripeBoxTheme,
     ],
   );
 
@@ -69,10 +69,9 @@ class AppTheme {
     ),
   );
 
-  static final _listTileLeftStripTheme = ListTileLeftStripeTheme(
+  static final _leftStripeBoxTheme = LeftStripeBoxTheme(
     background: AppColors.white,
     stripColor: AppColors.primaryColor,
-    padding: const EdgeInsets.symmetric(horizontal: 12),
     borderRadius: BorderRadius.circular(4),
   );
 }
@@ -84,5 +83,5 @@ extension AppThemeExtension on ThemeData {
 
   AppGradientTheme get appGradientTheme => extension<AppGradientTheme>() ?? AppTheme._lightGradientTheme;
 
-  ListTileLeftStripeTheme get listTileLeftStripTheme => extension<ListTileLeftStripeTheme>() ?? AppTheme._listTileLeftStripTheme;
+  LeftStripeBoxTheme get listTileLeftStripTheme => extension<LeftStripeBoxTheme>() ?? AppTheme._leftStripeBoxTheme;
 }

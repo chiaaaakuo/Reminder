@@ -3,21 +3,27 @@ import 'package:reminder/extensions/widget_extensions.dart';
 
 class GradientBackground extends StatelessWidget {
   const GradientBackground({
-    Key? key,
-    this.gradient,
+    super.key,
     required this.child,
-  }) : super(key: key);
+    this.gradient,
+  });
 
   final Gradient? gradient;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: gradient ?? LinearGradient(colors: [context.theme.colorScheme.primary, context.theme.colorScheme.onPrimary]),
-      ),
-      child: child,
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: gradient ?? LinearGradient(colors: [context.theme.colorScheme.primary, context.theme.colorScheme.onPrimary]),
+            ),
+          ),
+        ),
+        child,
+      ],
     );
   }
 }

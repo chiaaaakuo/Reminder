@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ListTileLeftStripeTheme extends ThemeExtension<ListTileLeftStripeTheme> {
+class LeftStripeBoxTheme extends ThemeExtension<LeftStripeBoxTheme> {
   final Color? background;
   final Color? stripColor;
   final EdgeInsetsGeometry? padding;
@@ -8,7 +8,7 @@ class ListTileLeftStripeTheme extends ThemeExtension<ListTileLeftStripeTheme> {
   final double stripWidth;
   final BorderRadius borderRadius;
 
-  const ListTileLeftStripeTheme({
+  const LeftStripeBoxTheme({
     this.background,
     this.stripColor,
     this.padding,
@@ -18,7 +18,7 @@ class ListTileLeftStripeTheme extends ThemeExtension<ListTileLeftStripeTheme> {
   });
 
   @override
-  ThemeExtension<ListTileLeftStripeTheme> copyWith({
+  ThemeExtension<LeftStripeBoxTheme> copyWith({
     Color? background,
     Color? stripColor,
     EdgeInsetsGeometry? padding,
@@ -26,7 +26,7 @@ class ListTileLeftStripeTheme extends ThemeExtension<ListTileLeftStripeTheme> {
     double? stripWidth,
     BorderRadius? borderRadius,
   }) {
-    return ListTileLeftStripeTheme(
+    return LeftStripeBoxTheme(
       background: background ?? this.background,
       stripColor: stripColor ?? this.stripColor,
       padding: padding ?? this.padding,
@@ -37,12 +37,12 @@ class ListTileLeftStripeTheme extends ThemeExtension<ListTileLeftStripeTheme> {
   }
 
   @override
-  ThemeExtension<ListTileLeftStripeTheme> lerp(covariant ThemeExtension<ListTileLeftStripeTheme>? other, double t) {
-    if (other is! ListTileLeftStripeTheme) {
+  ThemeExtension<LeftStripeBoxTheme> lerp(covariant ThemeExtension<LeftStripeBoxTheme>? other, double t) {
+    if (other is! LeftStripeBoxTheme) {
       return this;
     }
 
-    return ListTileLeftStripeTheme(
+    return LeftStripeBoxTheme(
       background: Color.lerp(background, other.background, t),
       stripColor: Color.lerp(stripColor, other.stripColor, t),
       padding: padding,
