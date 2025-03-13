@@ -55,6 +55,17 @@ class AppTheme {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       side: BorderSide(color: AppColors.grey, width: 1),
     ),
+    dialogTheme: const DialogThemeData().copyWith(
+      titleTextStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+      contentTextStyle:const TextStyle(
+        color: Colors.black,
+        fontSize: 18,
+      ),
+    ),
     extensions: [
       _lightGradientTheme,
       _leftStripeBoxTheme,

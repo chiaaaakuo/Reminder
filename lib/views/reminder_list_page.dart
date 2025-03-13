@@ -93,12 +93,16 @@ class _RemindersPageState extends State<RemindersPage> {
   void _showErrorDialog(String errorMessage) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog.adaptive(title: Text(errorMessage), actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text(Strings.ok),
-        )
-      ]),
+      builder: (context) => AlertDialog.adaptive(
+        title: const Text(Strings.errorTitle),
+        content: Text(errorMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(Strings.ok),
+          )
+        ],
+      ),
     );
   }
 }
