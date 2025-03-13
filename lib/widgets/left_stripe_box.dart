@@ -30,8 +30,15 @@ class LeftStripeBox extends StatelessWidget {
           Positioned.fill(
             child: Row(
               children: [
-                Container(width: stripeWidth ?? leftStripeTheme.stripWidth, color: stripeColor ?? leftStripeTheme.stripColor),
-                Expanded(child: Container(color: background ?? leftStripeTheme.background)),
+                Container(
+                  width: stripeWidth ?? leftStripeTheme.stripWidth,
+                  color: stripeColor ?? leftStripeTheme.stripColor,
+                ),
+                Expanded(
+                  child: Container(
+                    color: background ?? leftStripeTheme.background,
+                  ),
+                ),
               ],
             ),
           ),

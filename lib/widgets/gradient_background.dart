@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reminder/extensions/widget_extensions.dart';
+import 'package:reminder/styles/themes.dart';
 
 class GradientBackground extends StatelessWidget {
   const GradientBackground({
@@ -18,7 +19,11 @@ class GradientBackground extends StatelessWidget {
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
-              gradient: gradient ?? LinearGradient(colors: [context.theme.colorScheme.primary, context.theme.colorScheme.onPrimary]),
+              gradient: gradient ??
+                  context.theme.appGradientTheme.backgroundGradient ??
+                  LinearGradient(
+                    colors: [context.theme.colorScheme.primary, context.theme.colorScheme.onPrimary],
+                  ),
             ),
           ),
         ),

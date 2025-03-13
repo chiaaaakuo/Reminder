@@ -4,7 +4,6 @@ import 'package:reminder/blocs/reminder_bloc/reminder_bloc.dart';
 import 'package:reminder/extensions/widget_extensions.dart';
 import 'package:reminder/models/sort_type.dart';
 import 'package:reminder/models/reminder.dart';
-import 'package:reminder/styles/themes.dart';
 import 'package:reminder/values/strings.dart';
 import 'package:reminder/widgets/gradient_background.dart';
 import 'package:reminder/widgets/progress_tracker.dart';
@@ -12,14 +11,14 @@ import 'package:reminder/widgets/scrollbar_list_view.dart';
 import 'package:reminder/widgets/left_stripe_box.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 
-class RemindersPage extends StatefulWidget {
-  const RemindersPage({super.key});
+class ReminderListPage extends StatefulWidget {
+  const ReminderListPage({super.key});
 
   @override
-  State<RemindersPage> createState() => _RemindersPageState();
+  State<ReminderListPage> createState() => _ReminderListPageState();
 }
 
-class _RemindersPageState extends State<RemindersPage> {
+class _ReminderListPageState extends State<ReminderListPage> {
   final ListObserverController _listObserverController = ListObserverController(controller: ScrollController());
 
   @override
@@ -38,7 +37,6 @@ class _RemindersPageState extends State<RemindersPage> {
       ],
       child: Scaffold(
         body: GradientBackground(
-          gradient: context.theme.appGradientTheme.backgroundGradient,
           child: SafeArea(
             child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraint) {
               return SingleChildScrollView(

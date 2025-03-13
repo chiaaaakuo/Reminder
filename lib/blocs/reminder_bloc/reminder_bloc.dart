@@ -25,7 +25,7 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   }
 
   Future<void> _loadReminders(Emitter<ReminderState> emit) async {
-    emit(state.copywith(
+    emit(state.copyWith(
       action: RemindersAction.load,
       status: RemindersStatus.loading,
     ));
@@ -33,14 +33,14 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     try {
       List<Reminder> reminders = _sortReminders(await _repository.getReminders(), state.sortType);
 
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.load,
         status: RemindersStatus.success,
         reminders: reminders,
-        completedReminders: reminders.where((reminder) => reminder.isDone).length,
+        completedReminders: reminders.where((Reminder reminder) => reminder.isDone).length,
       ));
     } on RepoException catch (e) {
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.load,
         status: RemindersStatus.failure,
         errorMessage: e.message,
@@ -49,31 +49,31 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   }
 
   Future<void> _addReminder(AddReminder event, Emitter<ReminderState> emit) async {
-    emit(state.copywith(
+    emit(state.copyWith(
       action: RemindersAction.add,
       status: RemindersStatus.loading,
     ));
 
     try {
-      final reminder = Reminder.temp(title: event.title);
+      final Reminder reminder = Reminder.temp(title: event.title);
       await _repository.addReminder(reminder);
       final List<Reminder> reminders = _sortReminders([...state.reminders, reminder], state.sortType);
-      final scrollToIndex = reminders.indexOf(reminder);
+      final int scrollToIndex = reminders.indexOf(reminder);
 
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.add,
         status: RemindersStatus.success,
         scrollToIndex: scrollToIndex,
         reminders: reminders,
       ));
     } on RepoException catch (e) {
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.add,
         status: RemindersStatus.failure,
         errorMessage: e.message,
       ));
     } catch (e) {
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.add,
         status: RemindersStatus.failure,
         errorMessage: "新增失敗 $e",
@@ -82,29 +82,29 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   }
 
   Future<void> _deleteReminder(DeleteReminder event, Emitter<ReminderState> emit) async {
-    emit(state.copywith(
+    emit(state.copyWith(
       action: RemindersAction.delete,
       status: RemindersStatus.loading,
     ));
     try {
       await _repository.deleteReminder(event.id);
-      List<Reminder> reminders = [...state.reminders]..removeWhere((reminder) => reminder.id == event.id);
+      List<Reminder> reminders = [...state.reminders]..removeWhere((Reminder reminder) => reminder.id == event.id);
       reminders = _sortReminders(reminders, state.sortType);
 
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.delete,
         status: RemindersStatus.success,
         reminders: reminders,
-        completedReminders: reminders.where((reminder) => reminder.isDone).length,
+        completedReminders: reminders.where((Reminder reminder) => reminder.isDone).length,
       ));
     } on RepoException catch (e) {
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.delete,
         status: RemindersStatus.failure,
         errorMessage: e.message,
       ));
     } catch (e) {
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.delete,
         status: RemindersStatus.failure,
         errorMessage: "刪除失敗 $e",
@@ -113,12 +113,12 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   }
 
   Future<void> _toggleReminderStatus(ToggleReminderStatus event, Emitter<ReminderState> emit) async {
-    emit(state.copywith(
+    emit(state.copyWith(
       action: RemindersAction.update,
       status: RemindersStatus.loading,
     ));
     try {
-      final newReminder = event.reminder.copyWith(isDone: event.isDone);
+      final Reminder newReminder = event.reminder.copyWith(isDone: event.isDone);
       await _repository.updateReminder(newReminder);
       List<Reminder> reminders = [...state.reminders];
 
@@ -134,20 +134,20 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
 
       reminders = _sortReminders(reminders, state.sortType);
 
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.update,
         status: RemindersStatus.success,
         reminders: reminders,
         completedReminders: completeCount,
       ));
     } on RepoException catch (e) {
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.update,
         status: RemindersStatus.failure,
         errorMessage: e.message,
       ));
     } catch (e) {
-      emit(state.copywith(
+      emit(state.copyWith(
         action: RemindersAction.update,
         status: RemindersStatus.failure,
         errorMessage: "${event.reminder.title} 狀態切換失敗",
@@ -156,7 +156,7 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   }
 
   Future<void> _toggleRemindersSort(ToggleRemindersSort event, Emitter<ReminderState> emit) async {
-    emit(state.copywith(
+    emit(state.copyWith(
       sortType: event.sortType,
       reminders: _sortReminders(state.reminders, event.sortType),
     ));
@@ -164,10 +164,10 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
 
   List<Reminder> _sortReminders(List<Reminder> reminders, SortType sortType) {
     if (sortType == SortType.createTimeAsc) {
-      return reminders.sorted((prev, post) => prev.createTime.compareTo(post.createTime));
+      return reminders.sorted((Reminder prev, Reminder post) => prev.createTime.compareTo(post.createTime));
     }
     if (sortType == SortType.incompleteFirst) {
-      return reminders.sorted((prev, post) {
+      return reminders.sorted((Reminder prev, Reminder post) {
         if (prev.isDone == post.isDone) {
           return prev.createTime.compareTo(post.createTime);
         }

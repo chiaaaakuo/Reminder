@@ -23,7 +23,7 @@ final class ReminderState {
     this.errorMessage,
   });
 
-  ReminderState copywith({
+  ReminderState copyWith({
     RemindersAction? action,
     RemindersStatus? status,
     String? errorMessage,

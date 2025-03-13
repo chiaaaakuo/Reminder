@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: Strings.appName,
           theme: AppTheme.light,
-          home: const RemindersPage(),
+          home: const ReminderListPage(),
         ),
       ),
     );

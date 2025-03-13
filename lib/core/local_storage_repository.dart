@@ -24,7 +24,7 @@ class LocalStorageRepository extends Repository {
   Future<void> addReminder(Reminder reminder) async {
     try {
       final List<Reminder> reminders = await getReminders();
-      final int index = reminders.indexWhere((item) => item.id == reminder.id);
+      final int index = reminders.indexWhere((Reminder item) => item.id == reminder.id);
       if (index == -1) {
         reminders.add(reminder);
       }
@@ -42,7 +42,7 @@ class LocalStorageRepository extends Repository {
   Future<void> deleteReminder(String id) async {
     try {
       final List<Reminder> reminders = await getReminders();
-      reminders.removeWhere((reminder) => reminder.id == id);
+      reminders.removeWhere((Reminder reminder) => reminder.id == id);
       await sharedPreference.setString(_todosCollectionKey, json.encode(reminders));
     } on ArgumentError catch (e) {
       throw RepoException("Argument Error: ${e.message}");
@@ -64,7 +64,7 @@ class LocalStorageRepository extends Repository {
       if (reminderJson is! List) {
         return [];
       }
-      final reminders = List<Map<dynamic, dynamic>>.from(reminderJson).map((item) => Reminder.fromJson(item)).toList();
+      final reminders = List<Map<dynamic, dynamic>>.from(reminderJson).map((Map item) => Reminder.fromJson(item)).toList();
       return reminders;
     } on ArgumentError catch (e) {
       throw RepoException("Argument Error: ${e.message}");
@@ -77,7 +77,7 @@ class LocalStorageRepository extends Repository {
   Future<void> updateReminder(Reminder reminder) async {
     try {
       final List<Reminder> reminders = await getReminders();
-      final int index = reminders.indexWhere((item) => item.id == reminder.id);
+      final int index = reminders.indexWhere((Reminder item) => item.id == reminder.id);
       if (index == -1) {
         return;
       }
